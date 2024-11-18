@@ -419,6 +419,52 @@ export default {
 		},
 
 		/**
+		 * Submit the revisions
+		 */
+		submitRevisions() {
+				console.log(this.submitApiUrl);
+			this.openDialog({
+				name: 'submitConfirmation',
+				title: this.i18nSubmit,
+				message: this.i18nConfirmSubmit,
+				actions: [
+					{
+						label: this.i18nSubmit,
+						isPrimary: true,
+						callback: (close) => {
+							$.ajax({
+								url: this.submitApiUrl,
+								context: this,
+								method: 'POST',
+								data: {roundId: this.reviewRoundId},
+								headers: {
+									'X-Csrf-Token': pkp.currentUser.csrfToken,
+									'X-Http-Method-Override': 'PUT',
+								},
+								error(r) {
+									if (!r.responseJSON) {
+										this.ajaxErrorCallback();
+									} else {
+										this.errors = r.responseJSON;
+									}
+									close();
+								},
+								success() {
+									window.location = this.submissionWizardUrl;
+								},
+							});
+						},
+					},
+					{
+						label: this.t('common.cancel'),
+						isWarnable: true,
+						callback: (close) => close(),
+					},
+				],
+			});
+		},
+
+		/**
 		 * Show a pop-up when save for later fails
 		 */
 		openSaveForLaterFailed() {
@@ -432,7 +478,6 @@ export default {
 						callback: (close) => close(),
 					},
 				],
-				modalStyle: 'negative',
 			});
 		},
 
@@ -662,7 +707,6 @@ export default {
 						callback: (close) => close(),
 					},
 				],
-				modalStyle: 'primary',
 			});
 		},
 
