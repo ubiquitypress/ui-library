@@ -30,6 +30,8 @@
 						:item="item"
 						:other-label="otherLabel"
 						:stage-id="stageId"
+						:assoc-type="assocType"
+						:assoc-id="assocId"
 						@cancel="cancelUpload"
 						@edit="edit"
 						@remove="remove"
@@ -45,7 +47,7 @@
 			:filename-locale="primaryLocale"
 			:files="items"
 			:options="options"
-			:query-params="{fileStage}"
+			:query-params="{fileStage, assocType, assocId}"
 			:upload-progress-label="uploadProgressLabel"
 			@updated:files="setFiles"
 		/>
@@ -165,6 +167,13 @@ export default {
 			type: String,
 			required: true,
 		},
+		assocType: {
+			type: Number,
+			default: null
+		},
+		assocId: {
+			type: Number,
+		},
 	},
 	emits: [
 		/** Emitted when a prop should be changed. Payload: `(id, newProps)`  */
@@ -259,7 +268,7 @@ export default {
 				actions: [
 					{
 						label: this.t('common.yes'),
-						isWarnable: true,
+						isPrimary: true,
 						callback: (close) => {
 							$.ajax({
 								url: this.apiUrl + '/' + item.id + '?stageId=' + this.stageId,
@@ -281,10 +290,10 @@ export default {
 					},
 					{
 						label: this.t('common.no'),
+						isWarnable: true,
 						callback: (close) => close(),
 					},
 				],
-				modalStyle: 'negative',
 			});
 		},
 
